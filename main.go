@@ -21,6 +21,14 @@ const (
 	height = 1024 // Height of the image we want...
 
 	// Interesting stuff here too...
+	// xmin   = -20.0 // Where the real axis stats from...
+	// xmax   = 10.0  // Where the real axis ends...
+	// ymin   = -10.0 // Where the imaginary axis stars from...
+	// ymax   = 10.0  // Where the imaginary axis ends...
+	// width  = 1024  // Width of the image we want...
+	// height = 1024  // Height of the image we want...
+
+	// Interesting stuff here too...
 	// xmin   = -1.502929
 	// xmax   = -1.456054
 	// ymin   = -0.023437
@@ -57,13 +65,14 @@ func main() {
 	}
 
 	// Create a new image...
-	img := image.NewGray(image.Rect(0, 0, width, height))
+	img := image.NewRGBA(image.Rectangle{image.Point{0, 0}, image.Point{width, height}})
+	// img := image.NewGray(image.Rect(0, 0, width, height))
 
 	// Iterate over each pixel position for the image and fill it in...
 	for i := 0; i < width; i++ {
 		for j := 0; j < height; j++ {
 			colour := getPixel(i, j)
-			img.Set(i, j, colour)
+			img.SetRGBA(i, j, colour)
 		}
 	}
 
@@ -83,7 +92,7 @@ func main() {
 }
 
 // getPixel: returns the colour we should have for the pixel position based on if the mandlebrot formula is converging or diverging at that position...
-func getPixel(i, j int) color.Color {
+func getPixel(i, j int) color.RGBA {
 
 	// As i, j are pixel pisitions, we do need to work out what actual axis points they represent on the real(x) and imaginary(y) axis...
 	xn := normaliseX(i)
@@ -107,19 +116,31 @@ func getPixel(i, j int) color.Color {
 		z = z*z + c
 		if abs := cmplx.Abs(z); abs > 4 {
 			mod := int(abs) % 255
-			brightness := mod
 
+			brightness := mod
 			if brightness < 70 {
 				brightness += 255 - 70
 			}
 
-			return color.Gray{uint8(brightness)}
+			redValue := 0
+			greenValue := 0
+			blueValue := 0
+
+			if mod%4 == 1 {
+				redValue = brightness
+			} else if mod%4 == 2 {
+				greenValue = brightness
+			} else if mod%4 == 3 {
+				blueValue = brightness
+			}
+
+			return color.RGBA{uint8(redValue), uint8(greenValue), uint8(blueValue), uint8(255)}
 		}
 	}
 
 	// If we reached here then we did maxiters and the absolute value did not get > 4, so we return the
 	// colour black for this pixel...
-	return color.Gray{uint8(0)}
+	return color.RGBA{uint8(0), uint8(0), uint8(0), uint8(255)}
 }
 
 // normaliseX: given the pixel point we are at for the width, it returns the value of the point(x) on the real axis...
