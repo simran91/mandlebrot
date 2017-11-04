@@ -66,7 +66,6 @@ func main() {
 
 	// Create a new image...
 	img := image.NewRGBA(image.Rectangle{image.Point{0, 0}, image.Point{width, height}})
-	// img := image.NewGray(image.Rect(0, 0, width, height))
 
 	// Iterate over each pixel position for the image and fill it in...
 	for i := 0; i < width; i++ {
@@ -111,7 +110,7 @@ func getPixel(i, j int) color.RGBA {
 
 	// we are going to run the formula z=z*z+c for a max of 'maxiters', if the absolute value at any of the interations gets
 	// larger than 4, then we know that the position is diverging, and we take a mod 255 of it (brighten it up if we want) and
-	// give it a shade of grey.
+	// give it a colour...
 	for i := 0; i <= maxiters; i++ {
 		z = z*z + c
 		if abs := cmplx.Abs(z); abs > 4 {
